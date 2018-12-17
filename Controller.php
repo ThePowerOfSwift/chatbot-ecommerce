@@ -2,13 +2,18 @@
 require_once dirname(__FILE__) . '/includes/config.php';
 require_once dirname(__FILE__) . '/includes/info.php';
 require_once dirname(__FILE__) . '/includes/TelegramView.php';
+require_once dirname(__FILE__) . '/includes/TemplatesView.php';
 require_once dirname(__FILE__) . '/includes/DB.php';
 require_once dirname(__FILE__) . '/includes/Logs.php';
+require_once dirname(__FILE__) . '/includes/DataCenter.php';
 
 class Controller {
     public function __construct() {
-        global $list_commands;
+        $this->data_center = new DataCenter();
+        $this->template_view = new TemplateView();
+        $this->logs = new Logs();
 
+        global $list_commands;
         $this->commands = explode(',', $list_commands);
     }
 
@@ -17,12 +22,67 @@ class Controller {
         $text = strtolower(trim($content['text']));
         
         //cek jika perintah diawali dengan tanda '/'
-        if (preg_match("/^\/(.*)/is", $text, $matches)) {
-        
+        if (preg_match("/^\/(.*)/is", $text, $correct)) {
+            $command = $correct[1];
+            if (!in_array($command, $this->commands)) {
+                $response = $this->displayData($req, $command);
+
+            } else {
+                $response = displayData($req, "search");
+            }
         }
         else {
+            if (!in_array($text, $this->commands)) {
+                $response = $this->displayData($req, $text);
 
+            } else {
+                $response = displayData($req, "search");
+            }
         }
+        return $response;
+    }
+
+    function getData($keyword) {
+        $result = $this->data_center->searchData($keyword);
+        return $result;
+    }
+
+    function displayData($req, $router) {
+        $message = $req['message']['text'];
+        $type = $req['message']['chat']['type'];
+        $username = $req['message']['from']['first_name'].' '.$req['message']['from']['last_name'];
+        //$keyboard = array();
+        
+        //panggil get data
+        switch($router){
+            case start:
+                $text[0] = $this->template_view->displayTheme('start', $username);
+                if ($type == "private") {
+                    $checkUser = $this->logs->checkUser($req['message']['from']['id']);
+                    if ($checkUser == 0) {
+                        $this->logs->saveUser($request['message']['from']);
+                    } else {
+                        $status = $this->logs->getUserStatus($request['message']['from']['id']);
+                        if ($status == "non-active")
+                        $this->logs->updateUserStatus($request['message']['from'], "active");
+                    }
+                }
+                break;
+            case search:
+                $data = $this->getData($message);
+                $text[0] = $this->template_view->displayTheme('search', $data);
+        }
+
+
+        $respons = array(
+            'router' => $router,
+            'text' => $text,
+            'photo' => $photo,
+            'keyboard' => $keyboard
+        );
+
+        return $respons;
+
     }
 
     function sendMessages($req,$res) {
@@ -37,7 +97,7 @@ class Controller {
             $output['photo'][] = $this->telegram_view->sendPhoto($chat_id, $res['photo']);
             //file_put_contents('photo.txt', print_r($output,true));
             //insert log response from Telegram API
-            $db_res = $this->logs->insertResponse($output['photo'][0], $res['route']);
+            $db_res = $this->logs->insertResponse($output['photo'][0], $res['router']);
         }
         if(isset($res['keyboard']) && $res['keyboard'] != "") {
             foreach ($res['text'] as $text) {
@@ -65,16 +125,16 @@ class Controller {
             #page '.$i++.' of '.sizeof($respons_arr);
                         $output['text'][] = $this->telegram_view->telegramSendMesageKeyboard($chat_id, $message_id, $r,$res['keyboard']);
                         //insert log response from Telegram API
-                        $db_res = $this->logs->insertResponse($output['text'][$count], $res['route']);
+                        $db_res = $this->logs->insertResponse($output['text'][$count], $res['router']);
                         $count++;
                     }
                 } else {
                     $output['text'][] = $this->telegram_view->telegramSendMesageKeyboard($chat_id, $message_id, $text,$res['keyboard']);
                     //insert log response from Telegram API
-                    $db_res = $this->logs->insertResponse($output['text'][0], $res['route']);
+                    $db_res = $this->logs->insertResponse($output['text'][0], $res['router']);
                 }
             }
-        } else if(isset($res['inlineKeyboard'])){
+        } elseif(isset($res['inlineKeyboard'])){
             foreach ($res['text'] as $text) {
                 $this->telegram_view->telegramSendChatAction($chat_id, "typing");
                 $output['text'][] = $this->telegram_view->telegramSendMesageInlineKeyboard($chat_id, $text,$res['inlineKeyboard']);
@@ -105,13 +165,13 @@ class Controller {
             #page '.$i++.' of '.sizeof($respons_arr);
                         $output['text'][] = $this->telegram_view->telegramSendMesageKeyboardHide($chat_id, $message_id, $r);
                         //insert log response from Telegram API
-                        $db_res = $this->logs->insertResponse($output['text'][$count], $res['route']);
+                        $db_res = $this->logs->insertResponse($output['text'][$count], $res['router']);
                         $count++;
                     }
                 } else {
                     $output['text'][] = $this->telegram_view->telegramSendMesageKeyboardHide($chat_id, $message_id, $text);
                     //insert log response from Telegram API
-                    $db_res = $this->logs->insertResponse($output['text'][0], $res['route']);
+                    $db_res = $this->logs->insertResponse($output['text'][0], $res['router']);
                 }
             }
         }
