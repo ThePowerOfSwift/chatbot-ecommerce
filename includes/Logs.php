@@ -2,7 +2,7 @@
 
 class Logs {
   public function __construct() {
-    $this->db_logs = new DB(DB_LOGS_SERVER, DB_LOGS_USERNAME, DB_LOGS_PASSWORD, DB_LOGS_NAME);
+    $this->db_logs = new DB(DATABASE_SERVER, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
   }
 
   function insertRequest($request=array(), $route) {

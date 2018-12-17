@@ -13,6 +13,8 @@ define('DB_BOTS_TABLE_REQUEST', 'telegram_requests');
 define('DB_BOTS_TABLE_RESPONSES', 'telegram_responses');
 define('DB_BOTS_TABLE_USER', 'telegram_user');
 
+define('DB_TABLE_DATA', '');
+
 define('TEMPLATE_DIR', '');
 define('DEFAULT_THEME', 'plain');
 
