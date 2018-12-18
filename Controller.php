@@ -45,6 +45,7 @@ class Controller {
 
     function getData($keyword) {
         $result = $this->data_center->searchData($keyword);
+		file_put_contents('query_result.txt', print_r($result,true));
         return $result;
     }
 

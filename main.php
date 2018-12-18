@@ -13,6 +13,9 @@ class BotTelegram {
         $req = json_decode($input, true);
 		
 		file_put_contents('request.txt', print_r($req,true));
+		
+		// Emergency shut down
+        #$req = NULL;
 
         if(isset($req['message'])) {
             $this->controller = new Controller();
