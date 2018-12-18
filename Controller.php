@@ -57,10 +57,12 @@ class Controller {
         $type = $req['message']['chat']['type'];
         $username = $req['message']['from']['first_name'].' '.$req['message']['from']['last_name'];
         //$keyboard = array();
+		$respons = array();
         
         switch($router){
             case 'start':
-                $text[0] = $this->template_view->displayTheme('start', $username);
+                //$text[0] = $this->template_view->displayTheme('start', $username);
+				$text[0] = "welcome to Coupang Bot";
                 if ($type == "private") {
                     $checkUser = $this->logs->checkUser($req['message']['from']['id']);
                     if ($checkUser == 0) {
