@@ -11,16 +11,16 @@ class Logs {
     $user_id = $request['message']['from']['id'];
     $chat_id = $request['message']['chat']['id'];
     $type = $request['message']['chat']['type'];
-    $first_name = mysql_escape_string($request['message']['from']['first_name']);
-    $last_name = mysql_escape_string($request['message']['from']['last_name']);
-    $username = mysql_escape_string($request['message']['from']['username']);
+    $first_name = mysqli_escape_string($request['message']['from']['first_name']);
+    $last_name = mysqli_escape_string($request['message']['from']['last_name']);
+    $username = mysqli_escape_string($request['message']['from']['username']);
     $date = $request['message']['date'];
     if (isset($request['message']['text'])) {
-      $text = mysql_escape_string($request['message']['text']);
+      $text = mysqli_escape_string($request['message']['text']);
     } else {
       $text = $request['message']['text'];
     }
-    $full = mysql_escape_string(json_encode($request));
+    $full = mysqli_escape_string(json_encode($request));
 
     $table = DB_BOTS_TABLE_REQUEST;
     $sql = "INSERT INTO `$table` (update_id, message_id, user_id, chat_id, type, first_name, last_name, username, date, text, command_type, full) VALUES ('{$update_id}', '{$message_id}', {$user_id}, {$chat_id}, '{$type}', '{$first_name}', '{$last_name}', '{$username}', '{$date}', '{$text}', '{$route}', '{$full}');";
@@ -52,16 +52,16 @@ class Logs {
       $date = $respons['result']['date'];
     }
     if (isset($respons['result']['text'])) {
-      $text = mysql_escape_string($respons['result']['text']);
+      $text = mysqli_escape_string($respons['result']['text']);
     } elseif (isset($respons['result']['video'])) {
-      $video = mysql_escape_string(json_encode($respons['result']['video']));
+      $video = mysqli_escape_string(json_encode($respons['result']['video']));
     } elseif (isset($respons['result']['audio'])) {
-      $audio = mysql_escape_string(json_encode($respons['result']['audio']));
+      $audio = mysqli_escape_string(json_encode($respons['result']['audio']));
     } elseif (isset($respons['result']['photo'])) {
-      $photo = mysql_escape_string(json_encode($respons['result']['photo']));
+      $photo = mysqli_escape_string(json_encode($respons['result']['photo']));
     }
     
-    $full = mysql_escape_string(json_encode($respons));
+    $full = mysqli_escape_string(json_encode($respons));
     
     $table = DB_BOTS_TABLE_RESPONSES;
     if ($text != "") {
@@ -88,9 +88,9 @@ class Logs {
   function saveUser($user=array()) {
     $table = DB_BOTS_TABLE_USER;
     $userid = $user['id'];
-    $first_name = mysql_escape_string($user['first_name']);
-    $last_name = mysql_escape_string($user['last_name']);
-    $username = mysql_escape_string($user['username']);
+    $first_name = mysqli_escape_string($user['first_name']);
+    $last_name = mysqli_escape_string($user['last_name']);
+    $username = mysqli_escape_string($user['username']);
     $status = "active";
     $sql = "INSERT INTO `$table` (user_id, first_name, last_name, username, status) VALUES ({$userid}, '{$first_name}', '{$last_name}', '{$username}', '{$status}');";
     $ret = $this->db_logs->query($sql);
