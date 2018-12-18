@@ -8,7 +8,7 @@ class DataCenter {
     function searchData($keyword) {
         $table = DB_TABLE_DATA;
 
-        $sql = "SELECT * FROM `$table` where product_name like '%{$keyword}%';";
+        $sql = "SELECT * FROM `$table` where product_name like '%{$keyword}%' or product_desc like '%{$keyword}%';";
         $ret = $this->db_datacenter->query($sql);
         return $ret;
     }
