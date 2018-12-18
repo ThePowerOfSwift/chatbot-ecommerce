@@ -15,12 +15,11 @@ class BotTelegram {
 		file_put_contents('request.txt', print_r($req,true));
 
         if(isset($req['message'])) {
-            $content = $req['message'];
-
             $this->controller = new Controller();
             $res = $this->controller->Parsing($req);
-            $output = $this->controller->sendMessages($req, $res);
-			file_put_contents('respons.txt', print_r($output,true));
+            file_put_contents('respons.txt', print_r($res,true));
+			$output = $this->controller->sendMessages($req, $res);
+			file_put_contents('output.txt', print_r($output,true));
         }
     }
 }

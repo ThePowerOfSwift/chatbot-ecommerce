@@ -55,7 +55,7 @@ class Controller {
         
         //panggil get data
         switch($router){
-            case start:
+            case 'start':
                 $text[0] = $this->template_view->displayTheme('start', $username);
                 if ($type == "private") {
                     $checkUser = $this->logs->checkUser($req['message']['from']['id']);
@@ -68,7 +68,7 @@ class Controller {
                     }
                 }
                 break;
-            case search:
+            case 'search':
                 $data = $this->getData($message);
                 $text[0] = $this->template_view->displayTheme('search', $data);
         }
@@ -133,11 +133,6 @@ class Controller {
                     //insert log response from Telegram API
                     $db_res = $this->logs->insertResponse($output['text'][0], $res['router']);
                 }
-            }
-        } elseif(isset($res['inlineKeyboard'])){
-            foreach ($res['text'] as $text) {
-                $this->telegram_view->telegramSendChatAction($chat_id, "typing");
-                $output['text'][] = $this->telegram_view->telegramSendMesageInlineKeyboard($chat_id, $text,$res['inlineKeyboard']);
             }
         } elseif (isset($res['text'])) {
             foreach ($res['text'] as $text) {
