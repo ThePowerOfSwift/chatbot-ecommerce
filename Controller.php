@@ -22,16 +22,26 @@ class Controller {
         //cek jika perintah diawali dengan tanda '/'
         if (preg_match("/^\/(.*)/is", $text, $correct)) {
             $command = $correct[1];
+			file_put_contents('command.txt', $command);
             if (in_array($command, $this->commands)) {
                 $response = $this->displayData($req, $command);
-            } else {
+            } 
+			elseif ($command == "start") {
+			    $response = $this->displayData($req, "start");
+			}
+			else {
                 $response = $this->displayData($req, "search");
             }
         }
         else {
+			file_put_contents('command.txt', $text);
             if (in_array($text, $this->commands)) {
                 $response = $this->displayData($req, $text);
-            } else {
+            } 
+			elseif ($text == "start") {
+			    $response = $this->displayData($req, "start");
+			}
+			else {
                 $response =  $this->displayData($req, "search");
             }
         }
