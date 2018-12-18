@@ -61,8 +61,8 @@ class Controller {
         
         switch($router){
             case 'start':
-                //$text[0] = $this->template_view->displayTheme('start', $username);
-				$text[0] = "welcome to Coupang Bot";
+                $text[0] = $this->template_view->displayTheme('start', $username);
+				//$text[0] = "welcome to Coupang Bot";
                 if ($type == "private") {
                     $checkUser = $this->logs->checkUser($req['message']['from']['id']);
                     if ($checkUser == 0) {
