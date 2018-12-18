@@ -9,6 +9,6 @@ $whatsnew = '
 
 //diakhiri koma!
 //tidak boleh ada spasi setelah koma!?
-$list_command = 'start,stop,help,contact,whatsnew,about,';
+$list_command = 'start,stop,help,contact,whatsnew,about';
 
 ?>
