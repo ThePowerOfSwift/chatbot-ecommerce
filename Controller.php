@@ -149,6 +149,7 @@ class Controller {
             '.$r.'
             #page '.$i++.' of '.sizeof($respons_arr);
                         $output['text'][] = $this->telegram_view->telegramSendMesageKeyboardHide($chat_id, $message_id, $r);
+						file_put_contents('output_telegram_view.txt', print_r($output,true));
                         //insert log response from Telegram API
                         $db_res = $this->logs->insertResponse($output['text'][$count], $res['router']);
                         $count++;
