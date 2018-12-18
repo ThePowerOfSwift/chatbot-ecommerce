@@ -8,7 +8,6 @@ class TemplatesView {
     }
     
     $this->setTheme($theme);
-    $this->libs = new Libs();
   }
   
   function setTheme($theme = '') {
