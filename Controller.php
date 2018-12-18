@@ -6,17 +6,14 @@ require_once dirname(__FILE__) . '/includes/TemplatesView.php';
 require_once dirname(__FILE__) . '/includes/DB.php';
 require_once dirname(__FILE__) . '/includes/Logs.php';
 require_once dirname(__FILE__) . '/includes/DataCenter.php';
-
 class Controller {
     public function __construct() {
         $this->data_center = new DataCenter();
         $this->template_view = new TemplatesView();
         $this->logs = new Logs();
-
         global $list_commands;
         $this->commands = explode(',', $list_commands);
     }
-
     function Parsing($req) {
         $content = $req['message'];
         $text = strtolower(trim($content['text']));
@@ -27,7 +24,6 @@ class Controller {
             $command = $correct[1];
             if (in_array($command, $this->commands)) {
                 $response = $this->displayData($req, $command);
-
             } else {
                 $response = $this->displayData($req, "search");
             }
@@ -35,44 +31,41 @@ class Controller {
         else {
             if (in_array($text, $this->commands)) {
                 $response = $this->displayData($req, $text);
-
             } else {
                 $response =  $this->displayData($req, "search");
             }
         }
         return $response;
     }
-
     function getData($keyword) {
         $result = $this->data_center->searchData($keyword);
 		file_put_contents('query_result.txt', print_r($result,true));
         return $result;
     }
-
     function displayData($req, $router) {
         $message = $req['message']['text'];
         $type = $req['message']['chat']['type'];
         $username = $req['message']['from']['first_name'].' '.$req['message']['from']['last_name'];
         //$keyboard = array();
         
-        //panggil get data
         switch($router){
             case 'start':
                 $text[0] = $this->template_view->displayTheme('start', $username);
                 if ($type == "private") {
                     $checkUser = $this->logs->checkUser($req['message']['from']['id']);
                     if ($checkUser == 0) {
-                        $this->logs->saveUser($request['message']['from']);
+                        $this->logs->saveUser($req['message']['from']);
                     } else {
-                        $status = $this->logs->getUserStatus($request['message']['from']['id']);
+                        $status = $this->logs->getUserStatus($req['message']['from']['id']);
                         if ($status == "non-active")
-                        $this->logs->updateUserStatus($request['message']['from'], "active");
+							$this->logs->updateUserStatus($req['message']['from'], "active");
                     }
                 }
                 break;
             case 'search':
                 $data = $this->getData($message);
                 $text[0] = $this->template_view->displayTheme('search', $data);
+				break;
         }
 
 
@@ -82,18 +75,13 @@ class Controller {
             //'photo' => $photo,
             //'keyboard' => $keyboard
         );
-
         return $respons;
-
     }
-
     function sendMessages($req,$res) {
         $this->telegram_view = new TelegramView();
-
         $output = array();
         $message_id = $req['message']['message_id'];
         $chat_id = $req['message']['chat']['id'];
-
         if(isset($res['photo']) && $res['photo'] != ""){
             $this->telegram_view->telegramSendChatAction($chat_id, "upload_photo");
             $output['photo'][] = $this->telegram_view->sendPhoto($chat_id, $res['photo']);
