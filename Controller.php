@@ -20,11 +20,12 @@ class Controller {
     function Parsing($req) {
         $content = $req['message'];
         $text = strtolower(trim($content['text']));
+		$response = array();
         
         //cek jika perintah diawali dengan tanda '/'
         if (preg_match("/^\/(.*)/is", $text, $correct)) {
             $command = $correct[1];
-            if (!in_array($command, $this->commands)) {
+            if (in_array($command, $this->commands)) {
                 $response = $this->displayData($req, $command);
 
             } else {
@@ -32,7 +33,7 @@ class Controller {
             }
         }
         else {
-            if (!in_array($text, $this->commands)) {
+            if (in_array($text, $this->commands)) {
                 $response = $this->displayData($req, $text);
 
             } else {
@@ -77,8 +78,8 @@ class Controller {
         $respons = array(
             'router' => $router,
             'text' => $text,
-            'photo' => $photo,
-            'keyboard' => $keyboard
+            //'photo' => $photo,
+            //'keyboard' => $keyboard
         );
 
         return $respons;
