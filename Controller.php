@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/includes/DataCenter.php';
 class Controller {
     public function __construct() {
         $this->data_center = new DataCenter();
-        $this->template_view = new TemplateView();
+        $this->template_view = new TemplatesView();
         $this->logs = new Logs();
 
         global $list_commands;
@@ -29,7 +29,7 @@ class Controller {
                 $response = $this->displayData($req, $command);
 
             } else {
-                $response = displayData($req, "search");
+                $response = $this->displayData($req, "search");
             }
         }
         else {
@@ -37,7 +37,7 @@ class Controller {
                 $response = $this->displayData($req, $text);
 
             } else {
-                $response = displayData($req, "search");
+                $response =  $this->displayData($req, "search");
             }
         }
         return $response;
